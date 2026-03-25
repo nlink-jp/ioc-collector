@@ -54,7 +54,7 @@ def main(
         help="Directory to save output files (default: current directory).",
     ),
     model: str = typer.Option(
-        "gemini-2.0-flash", "--model",
+        "gemini-2.5-flash", "--model",
         help="Gemini model ID to use for research.",
     ),
     verbose: bool = typer.Option(

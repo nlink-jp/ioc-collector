@@ -64,8 +64,8 @@ def test_app_target_argument(mock_gemini):
     assert "Extracting structured report..." in result.stdout
     assert "Markdown report saved to:" in result.stdout
     assert "STIX bundle saved to:" in result.stdout
-    mock_client.research.assert_called_once_with(target_text, model="gemini-2.0-flash")
-    mock_client.extract_report.assert_called_once_with(MOCK_RESEARCH_RESULT, model="gemini-2.0-flash")
+    mock_client.research.assert_called_once_with(target_text, model="gemini-2.5-flash")
+    mock_client.extract_report.assert_called_once_with(MOCK_RESEARCH_RESULT, model="gemini-2.5-flash")
 
 
 def test_app_file_argument(tmp_path, mock_gemini):

@@ -19,7 +19,7 @@ from ioc_collector.models import IncidentReport
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "gemini-2.0-flash"
+DEFAULT_MODEL = "gemini-2.5-flash"
 DEFAULT_LOCATION = "us-central1"
 DEFAULT_MAX_RETRIES = 5
 _RETRY_BASE_WAIT = 2  # 秒（指数バックオフの基数）

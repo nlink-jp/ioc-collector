@@ -1,3 +1,23 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# 参照用外部プロジェクト（リポジトリには含めない）
+external/
+
+# ioc-collector の出力ファイル
+*.md
+*.json
+!README.md
+!AGENTS.md
+!DOCUMENT.md
+!GEMINI.md
+!ARCHITECTURE.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
