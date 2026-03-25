@@ -110,3 +110,58 @@ class TestResearch:
 
         config = mock_instance.models.generate_content.call_args.kwargs["config"]
         assert "ja" in config.system_instruction
+
+    def test_research_appends_grounding_sources(self, mock_genai_client):
+        """グラウンディングメタデータの実 URL をテキストに追記する。"""
+        _, mock_instance = mock_genai_client
+        chunk = MagicMock()
+        chunk.web.uri = "https://example.com/report"
+        chunk.web.title = "Example Security Report"
+        candidate = MagicMock()
+        candidate.grounding_metadata.grounding_chunks = [chunk]
+        mock_response = MagicMock()
+        mock_response.text = "Research text"
+        mock_response.candidates = [candidate]
+        mock_instance.models.generate_content.return_value = mock_response
+
+        client = GeminiResearchClient(project="my-project", location="us-central1")
+        result = client.research("test query")
+
+        assert "Research text" in result
+        assert "https://example.com/report" in result
+        assert "Example Security Report" in result
+
+    def test_research_filters_vertexai_redirect_urls(self, mock_genai_client):
+        """Vertex AI リダイレクト URL はグラウンディングソースから除外する。"""
+        _, mock_instance = mock_genai_client
+        redirect_chunk = MagicMock()
+        redirect_chunk.web.uri = "https://vertexaisearch.cloud.google.com/grounding-api-redirect/abc123"
+        redirect_chunk.web.title = "Redirected"
+        real_chunk = MagicMock()
+        real_chunk.web.uri = "https://real-source.com/article"
+        real_chunk.web.title = "Real Source"
+        candidate = MagicMock()
+        candidate.grounding_metadata.grounding_chunks = [redirect_chunk, real_chunk]
+        mock_response = MagicMock()
+        mock_response.text = "Research text"
+        mock_response.candidates = [candidate]
+        mock_instance.models.generate_content.return_value = mock_response
+
+        client = GeminiResearchClient(project="my-project", location="us-central1")
+        result = client.research("test query")
+
+        assert "vertexaisearch.cloud.google.com" not in result
+        assert "https://real-source.com/article" in result
+
+    def test_research_no_grounding_metadata_returns_text_only(self, mock_genai_client):
+        """グラウンディングメタデータがない場合はテキストのみ返す。"""
+        _, mock_instance = mock_genai_client
+        mock_response = MagicMock()
+        mock_response.text = "Research text"
+        mock_response.candidates = []
+        mock_instance.models.generate_content.return_value = mock_response
+
+        client = GeminiResearchClient(project="my-project", location="us-central1")
+        result = client.research("test query")
+
+        assert result == "Research text"
