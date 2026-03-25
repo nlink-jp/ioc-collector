@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.3] - 2026-03-25
+
+### Fixed
+
+- Reference titles were showing only the hostname instead of the actual page title
+  - When resolving Vertex AI redirect URLs, the first 4 KB of the resolved page is now read to extract the `<title>` tag
+  - HTML entities in titles are unescaped (e.g., `&amp;` → `&`)
+  - Falls back to the hostname from grounding metadata if title extraction fails
+
+---
+
 ## [0.1.2] - 2026-03-25
 
 ### Fixed
@@ -66,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - STIX JSON output uses `ensure_ascii=False` for human-readable non-ASCII characters
 - `OTHER` type IoCs use `pattern_type="sigma"` as a STIX validator workaround
 
+[0.1.3]: https://github.com/magifd2/ioc-collector/releases/tag/v0.1.3
 [0.1.2]: https://github.com/magifd2/ioc-collector/releases/tag/v0.1.2
 [0.1.1]: https://github.com/magifd2/ioc-collector/releases/tag/v0.1.1
 [0.1.0]: https://github.com/magifd2/ioc-collector/releases/tag/v0.1.0
