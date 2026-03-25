@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1] - 2026-03-25
+
+### Added
+
+- `--language`/`-l` option to specify report output language as a BCP 47 code (default: `ja`)
+  - Affects both Gemini system instructions and Markdown section headers (`ja`/`en`, English fallback for others)
+
+### Fixed
+
+- Reference URLs in reports were showing Vertex AI redirect URLs (`vertexaisearch.cloud.google.com`) instead of original source URLs
+  - Real source URLs are now extracted from grounding metadata and appended to the research text
+  - `extract_report()` is instructed to prefer grounding sources and exclude redirect URLs
+- Report generation timestamp was displayed without timezone information
+  - Changed to local timezone-aware format (e.g., `2026-03-25 15:31:40 JST`)
+
+### Changed
+
+- STIX 2.1 JSON output now uses `ensure_ascii=False` for human-readable non-ASCII characters
+- References field changed from `list[str]` to `list[ReferenceEntry(title, url)]`; Markdown renders as `[title](url)` clickable links
+- Progress display improved with Rich spinner during API calls
+
+---
+
 ## [0.1.0] - 2026-03-25
 
 ### Added
@@ -33,4 +56,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - STIX JSON output uses `ensure_ascii=False` for human-readable non-ASCII characters
 - `OTHER` type IoCs use `pattern_type="sigma"` as a STIX validator workaround
 
+[0.1.1]: https://github.com/magifd2/ioc-collector/releases/tag/v0.1.1
 [0.1.0]: https://github.com/magifd2/ioc-collector/releases/tag/v0.1.0
