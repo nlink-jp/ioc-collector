@@ -56,7 +56,7 @@ class MarkdownReport:
 
         lines.append(f"# {r.title}")
         lines.append("")
-        lines.append(f"**生成日時:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        lines.append(f"**生成日時:** {datetime.now().astimezone().strftime('%Y-%m-%d %H:%M:%S %Z')}")
         lines.append("")
 
         lines.append(f"## {self._h['summary']}")
