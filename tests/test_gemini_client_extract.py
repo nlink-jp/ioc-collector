@@ -90,3 +90,14 @@ class TestExtractReport:
 
         call_kwargs = mock_api.models.generate_content.call_args.kwargs
         assert call_kwargs["model"] == "gemini-2.5-pro"
+
+    def test_language_included_in_system_instruction(self, client_with_mock):
+        client, mock_api = client_with_mock
+        mock_api.models.generate_content.return_value = MagicMock(
+            text=json.dumps(SAMPLE_REPORT_DATA)
+        )
+
+        client.extract_report("raw research text", language="en")
+
+        config = mock_api.models.generate_content.call_args.kwargs["config"]
+        assert "en" in config.system_instruction

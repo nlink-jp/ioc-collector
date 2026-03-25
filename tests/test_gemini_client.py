@@ -90,3 +90,23 @@ class TestResearch:
 
         call_kwargs = mock_instance.models.generate_content.call_args.kwargs
         assert call_kwargs["model"] == "gemini-2.5-pro"
+
+    def test_language_included_in_system_instruction(self, mock_genai_client):
+        _, mock_instance = mock_genai_client
+        mock_instance.models.generate_content.return_value = MagicMock(text="result")
+
+        client = GeminiResearchClient(project="my-project", location="us-central1")
+        client.research("test query", language="en")
+
+        config = mock_instance.models.generate_content.call_args.kwargs["config"]
+        assert "en" in config.system_instruction
+
+    def test_default_language_is_japanese(self, mock_genai_client):
+        _, mock_instance = mock_genai_client
+        mock_instance.models.generate_content.return_value = MagicMock(text="result")
+
+        client = GeminiResearchClient(project="my-project", location="us-central1")
+        client.research("test query")
+
+        config = mock_instance.models.generate_content.call_args.kwargs["config"]
+        assert "ja" in config.system_instruction

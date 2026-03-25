@@ -64,8 +64,8 @@ def test_app_target_argument(mock_gemini):
     assert "Extracting structured report..." in result.stdout
     assert "Markdown report saved to:" in result.stdout
     assert "STIX bundle saved to:" in result.stdout
-    mock_client.research.assert_called_once_with(target_text, model="gemini-2.5-flash")
-    mock_client.extract_report.assert_called_once_with(MOCK_RESEARCH_RESULT, model="gemini-2.5-flash")
+    mock_client.research.assert_called_once_with(target_text, model="gemini-2.5-flash", language="ja")
+    mock_client.extract_report.assert_called_once_with(MOCK_RESEARCH_RESULT, model="gemini-2.5-flash", language="ja")
 
 
 def test_app_file_argument(tmp_path, mock_gemini):
@@ -131,8 +131,8 @@ def test_app_custom_model(mock_gemini):
         ["--target", "test-incident", "--non-interactive", "--model", "gemini-2.5-pro"],
     )
     assert result.exit_code == 0
-    mock_client.research.assert_called_once_with("test-incident", model="gemini-2.5-pro")
-    mock_client.extract_report.assert_called_once_with(MOCK_RESEARCH_RESULT, model="gemini-2.5-pro")
+    mock_client.research.assert_called_once_with("test-incident", model="gemini-2.5-pro", language="ja")
+    mock_client.extract_report.assert_called_once_with(MOCK_RESEARCH_RESULT, model="gemini-2.5-pro", language="ja")
 
 
 def test_app_custom_output_dir(mock_gemini, tmp_path):
@@ -172,3 +172,15 @@ class TestErrorHandling:
     def test_verbose_flag_accepted(self, mock_gemini):
         result = runner.invoke(app, ["--target", "test", "--non-interactive", "--verbose"])
         assert result.exit_code == 0
+
+
+def test_app_custom_language(mock_gemini):
+    """--language オプションで言語を指定できることを確認する"""
+    _, mock_client, _, _ = mock_gemini
+    result = runner.invoke(
+        app,
+        ["--target", "test-incident", "--non-interactive", "--language", "en"],
+    )
+    assert result.exit_code == 0
+    mock_client.research.assert_called_once_with("test-incident", model="gemini-2.5-flash", language="en")
+    mock_client.extract_report.assert_called_once_with(MOCK_RESEARCH_RESULT, model="gemini-2.5-flash", language="en")

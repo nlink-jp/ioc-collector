@@ -64,7 +64,7 @@ class TestRender:
 
     def test_ioc_section_has_defang_warning(self, sample_report):
         md = MarkdownReport(sample_report).render()
-        assert "デファング処理済み" in md
+        assert "デファング処理済み" in md  # ja ヘッダーに含まれる語句
 
     def test_contains_all_references(self, sample_report):
         md = MarkdownReport(sample_report).render()
@@ -76,6 +76,34 @@ class TestRender:
         md = MarkdownReport(sample_report).render()
         for measure in sample_report.countermeasures:
             assert measure in md
+
+    def test_default_language_is_japanese(self, sample_report):
+        md = MarkdownReport(sample_report).render()
+        assert "## インシデント概要" in md
+        assert "## 参考情報" in md
+
+    def test_english_headers(self):
+        report = IncidentReport(
+            title="Test",
+            summary="A test.",
+            affected_scope="Global.",
+            timeline=["2024-01-01: event"],
+            countermeasures=["patch"],
+            iocs=[IoCEntry(type=IoCType.IPV4_ADDR, value="192.0.2.1")],
+            references=[ReferenceEntry(title="Ref", url="https://example.com")],
+        )
+        md = MarkdownReport(report, language="en").render()
+        assert "## Summary" in md
+        assert "## Timeline" in md
+        assert "## Affected Scope" in md
+        assert "## Countermeasures" in md
+        assert "## References" in md
+        assert "インシデント概要" not in md
+
+    def test_unknown_language_falls_back_to_english(self):
+        report = IncidentReport(title="T", summary="S.", affected_scope="A.")
+        md = MarkdownReport(report, language="zh").render()
+        assert "## Summary" in md
 
     def test_empty_sections_are_omitted(self):
         report = IncidentReport(

@@ -59,6 +59,10 @@ def main(
         "gemini-2.5-flash", "--model",
         help="Gemini model ID to use for research.",
     ),
+    language: str = typer.Option(
+        "ja", "-l", "--language",
+        help="Output language as a BCP 47 code (e.g. ja, en). Default: ja.",
+    ),
     verbose: bool = typer.Option(
         False, "--verbose", "-v",
         help="Enable debug logging.",
@@ -108,7 +112,7 @@ def main(
     typer.echo("Starting investigation...")
     try:
         with _console.status("Searching the web for incident information..."):
-            research_text = client.research(input_content, model=model)
+            research_text = client.research(input_content, model=model, language=language)
     except GeminiAuthError as e:
         typer.echo(f"Error: Authentication failed. {e}", err=True)
         typer.echo("Hint: Run `gcloud auth application-default login`", err=True)
@@ -129,7 +133,7 @@ def main(
     typer.echo("Extracting structured report...")
     try:
         with _console.status("Analyzing research results and extracting IoCs..."):
-            report = client.extract_report(research_text, model=model)
+            report = client.extract_report(research_text, model=model, language=language)
     except GeminiRateLimitError as e:
         typer.echo(
             f"Error: Rate limit exceeded after retries. "
@@ -146,7 +150,7 @@ def main(
     typer.echo("Extraction complete.")
 
     # --- Markdown 保存 ---
-    md_report = MarkdownReport(report)
+    md_report = MarkdownReport(report, language=language)
     saved_md = md_report.save(output)
     typer.echo(f"Markdown report saved to: {saved_md}")
 

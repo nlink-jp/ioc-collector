@@ -7,6 +7,31 @@ from pathlib import Path
 from ioc_collector.defang import defang
 from ioc_collector.models import IncidentReport
 
+_HEADERS: dict[str, dict[str, str]] = {
+    "ja": {
+        "summary": "インシデント概要",
+        "timeline": "タイムライン",
+        "affected_scope": "影響範囲",
+        "countermeasures": "対策",
+        "iocs": "IoC (Indicators of Compromise)",
+        "references": "参考情報",
+        "defang_warning": "IoC 値はデファング処理済みです。実際の値として使用する際はデファングを解除してください。",
+    },
+    "en": {
+        "summary": "Summary",
+        "timeline": "Timeline",
+        "affected_scope": "Affected Scope",
+        "countermeasures": "Countermeasures",
+        "iocs": "IoC (Indicators of Compromise)",
+        "references": "References",
+        "defang_warning": "IoC values are defanged. Refang before use in detection tools.",
+    },
+}
+
+
+def _get_headers(language: str) -> dict[str, str]:
+    return _HEADERS.get(language, _HEADERS["en"])
+
 
 def _sanitize_filename(text: str) -> str:
     """タイトルをファイル名として安全な文字列に変換する。"""
@@ -20,8 +45,9 @@ def _sanitize_filename(text: str) -> str:
 class MarkdownReport:
     """IncidentReport を Markdown 形式に変換し、ファイルに保存するクラス。"""
 
-    def __init__(self, report: IncidentReport) -> None:
+    def __init__(self, report: IncidentReport, language: str = "ja") -> None:
         self._report = report
+        self._h = _get_headers(language)
 
     def render(self) -> str:
         """Markdown 文字列を生成して返す。"""
@@ -33,37 +59,34 @@ class MarkdownReport:
         lines.append(f"**生成日時:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         lines.append("")
 
-        lines.append("## インシデント概要")
+        lines.append(f"## {self._h['summary']}")
         lines.append("")
         lines.append(r.summary)
         lines.append("")
 
         if r.timeline:
-            lines.append("## タイムライン")
+            lines.append(f"## {self._h['timeline']}")
             lines.append("")
             for entry in r.timeline:
                 lines.append(f"- {entry}")
             lines.append("")
 
-        lines.append("## 影響範囲")
+        lines.append(f"## {self._h['affected_scope']}")
         lines.append("")
         lines.append(r.affected_scope)
         lines.append("")
 
         if r.countermeasures:
-            lines.append("## 対策")
+            lines.append(f"## {self._h['countermeasures']}")
             lines.append("")
             for measure in r.countermeasures:
                 lines.append(f"- {measure}")
             lines.append("")
 
         if r.iocs:
-            lines.append("## IoC (Indicators of Compromise)")
+            lines.append(f"## {self._h['iocs']}")
             lines.append("")
-            lines.append(
-                "> **注意:** IoC 値はデファング処理済みです。"
-                " 実際の値として使用する際はデファングを解除してください。"
-            )
+            lines.append(f"> **Note:** {self._h['defang_warning']}")
             lines.append("")
             for ioc in r.iocs:
                 safe_value = defang(ioc.value, ioc.type)
@@ -72,7 +95,7 @@ class MarkdownReport:
             lines.append("")
 
         if r.references:
-            lines.append("## 参考情報")
+            lines.append(f"## {self._h['references']}")
             lines.append("")
             for ref in r.references:
                 if ref.url:
