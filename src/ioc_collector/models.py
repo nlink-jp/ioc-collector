@@ -27,6 +27,13 @@ class IoCEntry(BaseModel):
     description: str = Field(default="", description="補足説明（例: C2 server, dropper hash）")
 
 
+class ReferenceEntry(BaseModel):
+    """参考情報のエントリ（タイトルと URL の組）。"""
+
+    title: str = Field(description="参考ページのタイトルまたは説明")
+    url: str = Field(description="参考ページの完全な URL（例: https://example.com/report）")
+
+
 class IncidentReport(BaseModel):
     """セキュリティインシデントの構造化レポート。"""
 
@@ -45,7 +52,7 @@ class IncidentReport(BaseModel):
         default_factory=list,
         description="IoC 一覧（型付き）",
     )
-    references: list[str] = Field(
+    references: list[ReferenceEntry] = Field(
         default_factory=list,
-        description="参考情報の URL 一覧",
+        description="参考情報のタイトルと URL の一覧",
     )

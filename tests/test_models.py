@@ -2,7 +2,7 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from ioc_collector.models import IncidentReport, IoCEntry, IoCType
+from ioc_collector.models import IncidentReport, IoCEntry, IoCType, ReferenceEntry
 
 
 def _sample_ioc(ioc_type: IoCType = IoCType.IPV4_ADDR, value: str = "192.0.2.1") -> dict:
@@ -21,7 +21,10 @@ def _valid_data() -> dict:
             _sample_ioc(IoCType.DOMAIN_NAME, "evil.example.com"),
             _sample_ioc(IoCType.FILE_HASH_MD5, "d41d8cd98f00b204e9800998ecf8427e"),
         ],
-        "references": ["https://example.com/report", "https://nvd.nist.gov/vuln/detail/CVE-2024-1234"],
+        "references": [
+        {"title": "Example Security Report", "url": "https://example.com/report"},
+        {"title": "NVD CVE-2024-1234", "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-1234"},
+    ],
     }
 
 

@@ -15,7 +15,7 @@ SAMPLE_REPORT_DATA = {
         {"type": "ipv4-addr", "value": "192.0.2.1", "description": ""},
         {"type": "domain-name", "value": "evil.example.com", "description": "C2 server"},
     ],
-    "references": ["https://example.com/report"],
+    "references": [{"title": "Example Security Report", "url": "https://example.com/report"}],
 }
 
 

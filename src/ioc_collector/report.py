@@ -75,7 +75,10 @@ class MarkdownReport:
             lines.append("## 参考情報")
             lines.append("")
             for ref in r.references:
-                lines.append(f"- {ref}")
+                if ref.url:
+                    lines.append(f"- [{ref.title}]({ref.url})")
+                else:
+                    lines.append(f"- {ref.title}")
             lines.append("")
 
         return "\n".join(lines)

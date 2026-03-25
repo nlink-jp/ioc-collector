@@ -5,7 +5,7 @@ from typer.testing import CliRunner
 
 from ioc_collector.exceptions import GeminiAuthError, GeminiRateLimitError, GeminiResponseError
 from ioc_collector.main import app
-from ioc_collector.models import IncidentReport, IoCEntry, IoCType
+from ioc_collector.models import IncidentReport, IoCEntry, IoCType, ReferenceEntry
 
 runner = CliRunner()
 
@@ -15,7 +15,7 @@ MOCK_REPORT = IncidentReport(
     summary="A test incident.",
     affected_scope="Test scope.",
     iocs=[IoCEntry(type=IoCType.IPV4_ADDR, value="192.0.2.1")],
-    references=["https://example.com"],
+    references=[ReferenceEntry(title="Example", url="https://example.com")],
 )
 MOCK_SAVED_PATH = Path("/tmp/Test_Incident_20240325_120000.md")
 

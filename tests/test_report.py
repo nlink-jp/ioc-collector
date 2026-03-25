@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from ioc_collector.models import IncidentReport, IoCEntry, IoCType
+from ioc_collector.models import IncidentReport, IoCEntry, IoCType, ReferenceEntry
 from ioc_collector.report import MarkdownReport
 
 
@@ -25,7 +25,7 @@ def sample_report() -> IncidentReport:
             IoCEntry(type=IoCType.DOMAIN_NAME, value="evil.example.com", description="C2 server"),
             IoCEntry(type=IoCType.FILE_HASH_MD5, value="d41d8cd98f00b204e9800998ecf8427e"),
         ],
-        references=["https://example.com/report"],
+        references=[ReferenceEntry(title="Example Security Report", url="https://example.com/report")],
     )
 
 
@@ -69,7 +69,8 @@ class TestRender:
     def test_contains_all_references(self, sample_report):
         md = MarkdownReport(sample_report).render()
         for ref in sample_report.references:
-            assert ref in md
+            assert ref.title in md
+            assert ref.url in md
 
     def test_contains_all_countermeasures(self, sample_report):
         md = MarkdownReport(sample_report).render()

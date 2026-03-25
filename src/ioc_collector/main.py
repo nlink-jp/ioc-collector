@@ -4,6 +4,7 @@ from typing import Optional
 from pathlib import Path
 
 import typer
+from rich.console import Console
 
 from ioc_collector.exceptions import (
     GeminiAuthError,
@@ -21,6 +22,7 @@ app = typer.Typer(
 )
 
 logger = logging.getLogger(__name__)
+_console = Console(stderr=True)
 
 
 def _setup_logging(verbose: bool) -> None:
@@ -105,7 +107,8 @@ def main(
     # --- 調査実行 ---
     typer.echo("Starting investigation...")
     try:
-        research_text = client.research(input_content, model=model)
+        with _console.status("Searching the web for incident information..."):
+            research_text = client.research(input_content, model=model)
     except GeminiAuthError as e:
         typer.echo(f"Error: Authentication failed. {e}", err=True)
         typer.echo("Hint: Run `gcloud auth application-default login`", err=True)
@@ -120,11 +123,13 @@ def main(
     except GeminiAPIError as e:
         typer.echo(f"Error: Gemini API error during research: {e}", err=True)
         raise typer.Exit(code=1)
+    typer.echo("Web search complete.")
 
     # --- 構造化抽出 ---
     typer.echo("Extracting structured report...")
     try:
-        report = client.extract_report(research_text, model=model)
+        with _console.status("Analyzing research results and extracting IoCs..."):
+            report = client.extract_report(research_text, model=model)
     except GeminiRateLimitError as e:
         typer.echo(
             f"Error: Rate limit exceeded after retries. "
@@ -138,6 +143,7 @@ def main(
     except GeminiAPIError as e:
         typer.echo(f"Error: Gemini API error during extraction: {e}", err=True)
         raise typer.Exit(code=1)
+    typer.echo("Extraction complete.")
 
     # --- Markdown 保存 ---
     md_report = MarkdownReport(report)

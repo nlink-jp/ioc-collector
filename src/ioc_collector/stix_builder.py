@@ -99,5 +99,5 @@ class StixBuilder:
         """指定ディレクトリに STIX Bundle JSON を保存し、保存先 Path を返す。"""
         output_dir.mkdir(parents=True, exist_ok=True)
         path = output_dir / self.filename()
-        path.write_text(self.build().serialize(pretty=True), encoding="utf-8")
+        path.write_text(self.build().serialize(pretty=True, ensure_ascii=False), encoding="utf-8")
         return path

@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 import stix2
 
-from ioc_collector.models import IncidentReport, IoCEntry, IoCType
+from ioc_collector.models import IncidentReport, IoCEntry, IoCType, ReferenceEntry
 from ioc_collector.stix_builder import StixBuilder
 
 
@@ -29,7 +29,7 @@ def sample_report() -> IncidentReport:
             IoCEntry(type=IoCType.PROCESS_NAME, value="svchost_fake.exe"),
             IoCEntry(type=IoCType.OTHER, value="registry key: HKLM\\Software\\Evil"),
         ],
-        references=["https://example.com/report"],
+        references=[ReferenceEntry(title="Example Report", url="https://example.com/report")],
     )
 
 
