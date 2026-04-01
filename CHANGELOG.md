@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.5] - 2026-04-01
+
+### Fixed
+
+- STIX pattern generation crashed with `InvalidValueError` when an IoC value contained a single quote
+  - Single quotes are now stripped from IoC values (they are extraction artifacts, not valid parts of real IoCs)
+  - Added error handling to skip individual IoCs that fail STIX pattern validation instead of aborting the entire report
+
+---
+
 ## [0.1.4] - 2026-03-28
 
 ### Changed
@@ -86,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - STIX JSON output uses `ensure_ascii=False` for human-readable non-ASCII characters
 - `OTHER` type IoCs use `pattern_type="sigma"` as a STIX validator workaround
 
+[0.1.5]: https://github.com/nlink-jp/ioc-collector/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/nlink-jp/ioc-collector/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/nlink-jp/ioc-collector/releases/tag/v0.1.3
 [0.1.2]: https://github.com/nlink-jp/ioc-collector/releases/tag/v0.1.2
