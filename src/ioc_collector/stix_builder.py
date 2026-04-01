@@ -23,7 +23,7 @@ def _ioc_to_pattern(ioc: IoCEntry) -> str:
 
     デファング表記を解除した実値を使用する。
     """
-    v = refang(ioc.value).replace("'", "")
+    v = refang(ioc.value).strip().replace("\\", "\\\\").replace("'", "")
     match ioc.type:
         case IoCType.IPV4_ADDR:
             return f"[ipv4-addr:value = '{v}']"
@@ -72,8 +72,11 @@ class StixBuilder:
         for ioc in self._report.iocs:
             try:
                 indicators.append(_build_indicator(ioc))
-            except stix2.exceptions.InvalidValueError:
-                logger.warning("Skipping IoC with invalid STIX pattern: %s", ioc.value)
+            except stix2.exceptions.InvalidValueError as e:
+                logger.warning(
+                    "Skipping IoC (type=%s, value=%s): %s",
+                    ioc.type.value, ioc.value, e,
+                )
 
         extra_objects: list = []
         if indicators:

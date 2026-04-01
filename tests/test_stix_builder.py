@@ -122,6 +122,39 @@ class TestBuildBundle:
         assert "[file:name = 'its_malware.exe']" in indicators["it's_malware.exe"].pattern
         assert "[domain-name:value = 'oreilly.evil.com']" in indicators["o'reilly.evil.com"].pattern
 
+    def test_backslash_in_value_is_escaped(self):
+        """バックスラッシュを含むファイルパスが正しくエスケープされること。"""
+        report = IncidentReport(
+            title="Test",
+            summary=".",
+            affected_scope=".",
+            iocs=[
+                IoCEntry(type=IoCType.FILE_NAME, value="%PROGRAMDATA%\\wt.exe"),
+                IoCEntry(type=IoCType.FILE_NAME, value="%TEMP%\\6202033.vbs"),
+            ],
+        )
+        bundle = StixBuilder(report).build()
+        indicators = [o for o in bundle.objects if o.type == "indicator"]
+        assert len(indicators) == 2
+        patterns = [i.pattern for i in indicators]
+        assert "[file:name = '%PROGRAMDATA%\\\\wt.exe']" in patterns[0]
+        assert "[file:name = '%TEMP%\\\\6202033.vbs']" in patterns[1]
+
+    def test_whitespace_in_value_is_stripped(self):
+        """前後の空白が除去されてパターン生成されること。"""
+        report = IncidentReport(
+            title="Test",
+            summary=".",
+            affected_scope=".",
+            iocs=[
+                IoCEntry(type=IoCType.FILE_HASH_SHA1, value=" da39a3ee5e6b4b0d3255bfef95601890afd80709 "),
+            ],
+        )
+        bundle = StixBuilder(report).build()
+        indicators = [o for o in bundle.objects if o.type == "indicator"]
+        assert len(indicators) == 1
+        assert "da39a3ee5e6b4b0d3255bfef95601890afd80709" in indicators[0].pattern
+
     def test_invalid_pattern_skipped_gracefully(self):
         """STIX パターンバリデーションに失敗した IoC がスキップされること。"""
         report = IncidentReport(
