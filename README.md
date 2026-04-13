@@ -31,12 +31,32 @@ uv sync --extra dev
 gcloud auth application-default login
 ```
 
-Set the required environment variables:
+### Config file
+
+Create `~/.config/ioc-collector/config.toml`:
+
+```toml
+project  = "your-project-id"
+location = "us-central1"
+```
+
+See [`config.example.toml`](config.example.toml) for a full example.
+
+### Environment variables
 
 ```bash
+# Tool-specific (highest priority)
+export IOC_COLLECTOR_PROJECT="your-project-id"
+export IOC_COLLECTOR_LOCATION="us-central1"
+
+# Cross-tool fallback
 export GOOGLE_CLOUD_PROJECT="your-project-id"
 export GOOGLE_CLOUD_LOCATION="us-central1"   # optional, defaults to us-central1
 ```
+
+### Priority order
+
+env vars (`IOC_COLLECTOR_*` / `GOOGLE_CLOUD_*`) > config.toml > defaults
 
 ## Usage
 
@@ -94,7 +114,7 @@ Each run produces two files:
 
 | Error message | Cause | Resolution |
 |---|---|---|
-| `GOOGLE_CLOUD_PROJECT is not set` | Missing env var | `export GOOGLE_CLOUD_PROJECT=...` |
+| `GOOGLE_CLOUD_PROJECT is not set` | Missing env var | Set via config file, `IOC_COLLECTOR_PROJECT`, or `GOOGLE_CLOUD_PROJECT` |
 | `Authentication failed` | ADC not configured or insufficient permissions | `gcloud auth application-default login` |
 | `Rate limit exceeded after retries` | API quota exceeded | Wait and retry |
 | `Could not parse structured report` | Malformed Gemini output | Run with `--verbose` and retry |

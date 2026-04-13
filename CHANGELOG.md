@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.7] - 2026-04-14
+
+### Added
+
+- TOML config file support (`~/.config/ioc-collector/config.toml`)
+- `IOC_COLLECTOR_PROJECT` / `IOC_COLLECTOR_LOCATION` tool-specific env vars
+- `GOOGLE_CLOUD_*` env var fallback for cross-tool consistency
+- Configuration priority: env vars > config.toml > defaults
+
 ## [0.1.6] - 2026-04-01
 
 ### Fixed

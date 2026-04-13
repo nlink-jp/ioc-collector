@@ -169,20 +169,15 @@ class GeminiResearchClient:
 
     @classmethod
     def from_env(cls) -> "GeminiResearchClient":
-        """環境変数からクライアントを初期化する。
+        """設定ファイルまたは環境変数からクライアントを初期化する。
 
-        必要な環境変数:
-            GOOGLE_CLOUD_PROJECT: Google Cloud プロジェクト ID
-            GOOGLE_CLOUD_LOCATION: リージョン（省略時は us-central1）
+        設定の優先順位:
+            1. 環境変数 (IOC_COLLECTOR_PROJECT / GOOGLE_CLOUD_PROJECT)
+            2. ~/.config/ioc-collector/config.toml
         """
-        project = os.environ.get("GOOGLE_CLOUD_PROJECT")
-        if not project:
-            raise ValueError(
-                "GOOGLE_CLOUD_PROJECT environment variable is not set. "
-                "Set it to your Google Cloud project ID."
-            )
-        location = os.environ.get("GOOGLE_CLOUD_LOCATION", DEFAULT_LOCATION)
-        return cls(project=project, location=location)
+        from ioc_collector.config import get_config
+        cfg = get_config()
+        return cls(project=cfg["project"], location=cfg["location"])
 
     def research(
         self,

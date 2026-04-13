@@ -1,0 +1,3 @@
+[gcp]
+project  = "your-project-id"
+location = "us-central1"

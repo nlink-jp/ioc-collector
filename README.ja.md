@@ -37,12 +37,32 @@ ADC（Application Default Credentials）を使用します。
 gcloud auth application-default login
 ```
 
-必要な環境変数を設定します。
+### 設定ファイル
+
+`~/.config/ioc-collector/config.toml` を作成します:
+
+```toml
+project  = "your-project-id"
+location = "us-central1"
+```
+
+完全な例は [`config.example.toml`](config.example.toml) を参照してください。
+
+### 環境変数
 
 ```bash
+# ツール固有（最優先）
+export IOC_COLLECTOR_PROJECT="your-project-id"
+export IOC_COLLECTOR_LOCATION="us-central1"
+
+# 汎用フォールバック
 export GOOGLE_CLOUD_PROJECT="your-project-id"
 export GOOGLE_CLOUD_LOCATION="us-central1"   # 省略時のデフォルト
 ```
+
+### 優先順位
+
+環境変数（`IOC_COLLECTOR_*` / `GOOGLE_CLOUD_*`）> config.toml > デフォルト値
 
 ## 使い方
 
