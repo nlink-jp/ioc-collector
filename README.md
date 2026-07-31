@@ -1,5 +1,14 @@
 # ioc-collector
 
+> [!IMPORTANT]
+> **Archived (2026-07-31).** ioc-collector has been superseded by the
+> [incident-research](https://github.com/nlink-jp/incident-research) Claude
+> Code Skill (v0.2+), which absorbs its IoC extraction and STIX 2.1 output
+> with a stronger research discipline (source tiers, read-before-cite,
+> confidence-qualified attribution). See
+> [ADR-010](https://github.com/nlink-jp/.github/blob/main/adr/010-incident-research-ioc-stix.md).
+> This repository is kept read-only for reference.
+
 A CLI tool that autonomously researches security incidents from report URLs, CVE IDs, or natural language queries, and extracts structured IoC (Indicators of Compromise) data into Markdown reports and STIX 2.1 bundles.
 
 [日本語版 README はこちら](README.ja.md)
